@@ -1,6 +1,6 @@
 # Do ECS Fargate ao EKS: Como um time enxuto economizou R$ 200k/mês enfrentando os desafios da governança bancária
 
-Migrar cargas de trabalho para o Kubernetes com a promessa de reduzir custos e gain scale é o sonho de qualquer liderança de tecnologia. Mas quem está na trincheira sabe a real: sem uma boa estratégia de plataforma, o Kubernetes joga uma complexidade brutal no colo dos desenvolvedores, gerando fricção, problemas de segurança e desperdício de nuvem.
+Migrar cargas de trabalho para o Kubernetes com a promessa de reduzir custos e ganhar escala é o sonho de qualquer liderança de tecnologia. Mas quem está na trincheira sabe a real: sem uma boa estratégia de plataforma, o Kubernetes joga uma complexidade brutal no colo dos desenvolvedores, gerando fricção, problemas de segurança e desperdício de nuvem.
 
 **Nos últimos três anos**, a área de investimentos do **Itaú** (o maior banco da América Latina) viveu intensamente esse desafio. Quando começamos a desenhar essa transição, tínhamos mais de 300 desenvolvedores cuidando de 160 serviços rodando em Amazon ECS Fargate. O cenário era o reflexo de muitas grandes empresas: custos subindo devido ao superdimensionamento (*overprovisioning*) crônico, problemas profundos para garantir a governança e lentidão no escalonamento de recursos.
 
@@ -24,7 +24,7 @@ O ECS Fargate é uma tecnologia fantástica para começar, mas conforme os times
 
 E para ser completamente honesto: **nós tínhamos um processo interno que eu odiava com todas as minhas forças, chamado "Marathon de FinOps".**
 
-O Marathon de FinOps era uma reunião recurrent e extremamente desgastante. O objetivo era juntar o time de infraestrutura e os líderes de produto para ficar caçando recursos órfãos na AWS e implorando para que os times colocassem tags básicas nos recursos — coisas simples, como a tag da `squad`, o dono do serviço ou o centro de custo. Era um trabalho de herói, totalmente manual, reativo e ineficiente.
+O Marathon de FinOps era uma reunião recorrente e extremamente desgastante. O objetivo era juntar o time de infraestrutura e os líderes de produto para ficar caçando recursos órfãos na AWS e implorando para que os times colocassem tags básicas nos recursos — coisas simples, como a tag da `squad`, o dono do serviço ou o centro de custo. Era um trabalho de herói, totalmente manual, reativo e ineficiente.
 
 > **O grande impacto disso era a cegueira total de custos.** A falta dessas tags fazia com que não tivéssemos a menor visibilidade de para onde o dinheiro estava indo. Faturas massivas da AWS chegavam e nós simplesmente não sabíamos quem eram os donos daqueles recursos, o que eles faziam e, o pior de tudo, se aquele custo sequer se justificava para o negócio. Era impossível auditar e otimizar o que não conseguíamos enxergar.
 
@@ -34,7 +34,7 @@ Além dessa dor de cabeça com FinOps, o modelo descentralizado do ECS gerava um
 * **Overprovisioning:** Na dúvida de quanta CPU ou Memória a aplicação precisava, o dev jogava o valor para o alto na Task Definition. Como o Fargate cobra exatamente pelo que está alocado (e não pelo que está sendo usado), a conta da AWS explodiu.
 * **O Gargalo do Escalonamento:** Devido à lentidão do *scaling* no ECS — que precisava bater na API da AWS a cada nova réplica para buscar *secrets* e *parameters* via API —, nossa velocidade de resposta a picos de tráfego era severamente afetada.
 
-Sabíamos que o Amazon EKS resolveria o problem do custo e da velocidade. Mas como fazer isso sem obrigar 300 desenvolvedores a aprenderem o manifesto complexo do Kubernetes (Deployments, Services, Ingress, HPA)? E pior: como garantir que a gente **matasse o Marathon de FinOps e a dependência de intervenções manuais app por app de uma vez por todas?**
+Sabíamos que o Amazon EKS resolveria o problema do custo e da velocidade. Mas como fazer isso sem obrigar 300 desenvolvedores a aprenderem o manifesto complexo do Kubernetes (Deployments, Services, Ingress, HPA)? E pior: como garantir que a gente **matasse o Marathon de FinOps e a dependência de intervenções manuais app por app de uma vez por todas?**
 
 Percebemos que a única saída era **interceptar o deploy dentro do próprio cluster**. Precisávamos de um operador que recebesse um YAML ultra simples do desenvolvedor e injetasse toda a complexidade e governança corporativa por baixo dos panos, de forma 100% automatizada.
 
@@ -55,7 +55,7 @@ Nossa arquitetura foi desenhada para ser simples:
 3. O ArgoCD aplica esse recurso customizado no cluster.
 4. O Metacontroller percebe a mudança e faz uma requisição HTTP POST para a nossa API em Python.
 5. Nosso código recebe o estado atual, injeta os padrões do banco (tags de billing obrigatórias por squad, variáveis do Datadog, sidecars de segurança e *health checks*) e devolve a resposta.
-6. O Metacontroller se encrega de criar ou atualizar os Deployments, HPAs e Services gerados.
+6. O Metacontroller se encarrega de criar ou atualizar os Deployments, HPAs e Services gerados.
 
 ---
 
@@ -107,12 +107,16 @@ Para contornar o pipeline imutável do banco, a esteira do GitHub Actions apenas
 
 ---
 
-## Conclusão: A Linha do Tempo de uma Virada de Chave Real
+## Conclusão: A Linha do Tempo de uma Jornada Viva
 
-Olhando para trás, os desafios de sustentar e evoluir uma solução "feita em casa" ao longo desses três anos nos ensinaram que o sucesso de uma plataforma de engenharia corporativa depende de paciência, consistência e processos bem desenhados. Essa jornada de 36 meses não aconteceu do dia para a noite, e dividiu-se em três grandes fases:
+Olhando para trás, os desafios de sustentar e evoluir uma solução "feita em casa" ao longo desses três anos nos ensinaram que o sucesso de uma plataforma de engenharia corporativa depende de paciência, consistência e processos bem desenhados. Essa jornada de 36 meses dividiu-se em três grandes fases:
 
-1. **Os Primeiros 6 Meses (Estudos e Provas de Conceito):** Foi o período onde quebramos a cabeça, validamos o Metacontroller, rodamos os primeiros scripts em Python puro e provamos para a governança do banco que conseguiríamos interceptar e injetar os padrões institucionais de forma segura dentro do cluster.
-2. **Os 2 Anos Seguintes (A Jornada de Migração):** O momento da trincheira. Diferente de uma startup que vira a chave no final de semana, a migração dos 160 serviços foi feita de forma gradual e assistida pelos próprios times de produto. Fomos refinando o operador (onde nasceu a virada para o FastAPI), evoluindo a validação com Pydantic e dando autonomia escalável para os 300+ desenvolvedores descerem do ECS e subirem no EKS sem fricção.
-3. **Os Últimos 6 Meses (A Consolidação do Valor):** Com 100% da casa migrada e estabilizada, foi onde finalmente alcançamos a maturidade da plataforma e chegamos aos números consolidados atuais. 
+1. **Os Primeiros 6 Meses (Estudos e Provas de Conceito):** O período em que validamos o Metacontroller, rodamos os primeiros scripts em Python puro e provamos para a governança que conseguiríamos injetar os padrões institucionais de forma segura dentro do cluster.
+2. **Os 2 Anos Seguintes (A Jornada de Migração):** O momento da trincheira. A migração dos serviços foi sendo feita de forma gradual e assistida pelos próprios times de produto. Famos refinando o operador (onde nasceu a virada para o FastAPI) e dando autonomia escalável para os desenvolvedores descerem do ECS.
+3. **Os Últimos 6 Meses (A Consolidação do Valor):** Com boa parte dos serviços migrados e o ecossistema estabilizado, alcançamos a maturidade atual da plataforma. 
 
-Hoje, colhemos uma **redução de 75% nos custos de infraestrutura em produção** e impressionantes **90% em desenvolvimento e homologação**. Matamos o fantasma do Marathon de FinOps, transformando a governança em um processo invisível e compulsório. A centralização dessa inteligência poupa milhões em faturas de nuvem e devolve mais de R$ 1 milhão por ano em horas de trabalho para os times de produto focarem no que realmente importa: o negócio de investimentos do Itaú.
+Hoje, colhemos uma **redução de 75% nos custos de infraestrutura em produção** e impressionantes **90% em desenvolvimento e homologação**. Matamos o fantasma do Marathon de FinOps, transformando a governança em um processo invisível e compulsório, devolvendo mais de R$ 1 milhão por ano em horas de trabalho para os times de produto. 
+
+O projeto, porém, está longe de estar "concluído". Mesmo sem atingirmos 100% de migração total de toda a carga de trabalho histórica, a eficiência que já geramos nos abriu os olhos para novas frentes. Atualmente, estamos estudando e desenhando otimizações de arquitetura com a meta ousada de **trazer o custo total dessa infraestrutura para a casa dos R$ 8.000 mensais**. 
+
+Em uma grande instituição financeira como o Itaú, provamos que times enxutos usando tecnologia de forma pragmática conseguem sim mudar o rumo da governança, da experiência do desenvolvedor e do faturamento de nuvem. E o trabalho continua.
