@@ -2,7 +2,7 @@
 
 Migrar cargas de trabalho para o Kubernetes com a promessa de reduzir custos e ganhar escala é o sonho de qualquer liderança de tecnologia. Mas quem está na trincheira sabe a real: sem uma boa estratégia de plataforma, o Kubernetes joga uma complexidade brutal no colo dos desenvolvedores, gerando fricção, problemas de segurança e desperdício de nuvem.
 
-**Nos últimos três anos**, a área de investimentos do **Itaú** (o maior banco da América Latina) viveu intensamente esse desafio. Quando começamos a desenhar essa transição, tínhamos mais de 300 desenvolvedores cuidando de 160 serviços rodando em Amazon ECS Fargate. O cenário era o reflexo de muitas grandes empresas: custos subindo devido ao superdimensionamento (*overprovisioning*) crônico, problemas profundos para garantir a governança e lentidão no escalonamento de recursos.
+**Nos últimos três anos**, a área de investimentos do maior banco da América Latina viveu intensamente esse desafio. Quando começamos a desenhar essa transição, tínhamos mais de 300 desenvolvedores cuidando de 160 serviços rodando em Amazon ECS Fargate. O cenário era o reflexo de muitas grandes empresas: custos subindo devido ao superdimensionamento (*overprovisioning*) crônico, problemas profundos para garantir a governança e lentidão no escalonamento de recursos.
 
 A resposta óbvia do mercado seria: *"Migre para o EKS e adote GitOps tradicional"*. O problema é que, em um ambiente financeiro altamente regulado, você não muda as regras da casa da noite para o dia. Tínhamos amarras de governança muito fortes e imutáveis: 
 
@@ -119,4 +119,4 @@ Hoje, colhemos uma **redução de 75% nos custos de infraestrutura em produção
 
 O projeto, porém, está longe de estar "concluído". Mesmo sem atingirmos 100% de migração total de toda a carga de trabalho histórica, a eficiência que já geramos nos abriu os olhos para novas frentes. Atualmente, estamos estudando e desenhando otimizações de arquitetura com a meta ousada de **trazer o custo total dessa infraestrutura para a casa dos R$ 8.000 mensais**. 
 
-Em uma grande instituição financeira como o Itaú, provamos que times enxutos usando tecnologia de forma pragmática conseguem sim mudar o rumo da governança, da experiência do desenvolvedor e do faturamento de nuvem. E o trabalho continua.
+Em uma grande instituição financeira como a nossa, provamos que times enxutos usando tecnologia de forma pragmática conseguem sim mudar o rumo da governança, da experiência do desenvolvedor e do faturamento de nuvem. E o trabalho continua.
